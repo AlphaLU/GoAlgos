@@ -3,6 +3,8 @@ package otp
 import (
 	"fmt"
 	"log"
+	"math/rand"
+	"time"
 )
 
 type Message struct {
@@ -11,13 +13,14 @@ type Message struct {
 	Result  string
 }
 
-var alphabet = []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
+var alphabet = []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " "}
 
 //Encipher
 func (m *Message) Encrypt() {
 	if !CheckValid(m) {
 		log.Println("Error, key or message are missing")
 	}
+
 	fmt.Println(alphabet, m.Message, m.Key)
 	var ab []string
 	for _, k := range m.Key {
@@ -70,6 +73,20 @@ func (m *Message) Decrypt() {
 			}
 		}
 	}
+}
+
+func (m *Message) GenerateKey() {
+	keyLength := len(m.Message)
+	var seed *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	const charset string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, keyLength)
+	for i := range b {
+		b[i] = charset[seed.Intn(len(charset))]
+	}
+	m.Key = string(b)
+	m.Encrypt()
+
 }
 
 func CheckValid(m *Message) bool {

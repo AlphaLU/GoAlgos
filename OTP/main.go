@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/AlphaLU/GoAlgos/OTP/otp"
 )
@@ -77,24 +78,35 @@ func main() {
 	// orgMessage := "GRILLEDCHEESE"
 	// key := "DLNJDOJKKCY3H"
 
-	interactiveFlag := flag.Bool("interactive", false, "toggle interactive mode")
-	modeFlag := flag.String("mode", "e", "(e)ncipher/(d)ecipher")
-	keyFlag := flag.String("key", "", "Enter an OTP key")
-	msgFlag := flag.String("message", "", "Enter a message to encipher/decipher")
-	log.Println(*interactiveFlag)
+	interactiveFlag := flag.Bool("i", false, "toggle interactive mode")
+	modeFlag := flag.String("mode", "e", "(e)ncipher/(d)ecipher (required if not in interactive mode)")
+	keyFlag := flag.String("key", "", "Enter an OTP key (required if not in interactive mode)")
+	msgFlag := flag.String("message", "", "Enter a message to encipher/decipher (required if not in interactive mode)")
+	genKeyFlag := flag.Bool("genkey", false, "Generate a key (must supply a message and mode)")
+	flag.Parse()
 
 	if *interactiveFlag {
 		interactiveInput()
+	} else if *genKeyFlag {
+		var ret otp.Message
+		scanner := bufio.NewScanner(os.Stdin)
+		log.Println("Enter message to encipher:")
+		scanner.Scan()
+		ret.Message = scanner.Text()
+		ret.GenerateKey()
+		log.Println("Your message: ", ret.Result)
+		log.Println("Your generated key is: ", ret.Key)
+
 	} else {
-		flag.Parse()
-		log.Println(*modeFlag, *keyFlag, *msgFlag)
 		var ret otp.Message
 		if len(*keyFlag) == len(*msgFlag) && len(*keyFlag) != 0 {
-			ret.Key = *keyFlag
-			ret.Message = *msgFlag
+			ret.Key = strings.ToUpper(*keyFlag)
+			ret.Message = strings.ToUpper(*msgFlag)
 			if *modeFlag == "e" {
+				log.Println(*modeFlag, *keyFlag, *msgFlag)
 				ret.Encrypt()
 			} else if *modeFlag == "d" {
+				log.Println(*modeFlag, *keyFlag, *msgFlag)
 				ret.Decrypt()
 			} else {
 				flag.PrintDefaults()
@@ -107,16 +119,5 @@ func main() {
 		}
 
 		p(ret.Result)
-		// var msg otp.Message
-		// msg.Key = key
-		// msg.Message = encMessage
-		// msg.Decrypt()
-		// p(msg.Result)
-
-		// var msg2 otp.Message
-		// msg2.Key = key
-		// msg2.Message = orgMessage
-		// msg2.Encrypt()
-		// p(msg2.Result)
 	}
 }
