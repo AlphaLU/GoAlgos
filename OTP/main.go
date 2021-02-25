@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"github.com/AlphaLU/GoAlgos/OTP/otp"
 )
@@ -100,8 +99,8 @@ func main() {
 	} else {
 		var ret otp.Message
 		if len(*keyFlag) == len(*msgFlag) && len(*keyFlag) != 0 {
-			ret.Key = strings.ToUpper(*keyFlag)
-			ret.Message = strings.ToUpper(*msgFlag)
+			ret.Key = *keyFlag
+			ret.Message = *msgFlag
 			if *modeFlag == "e" {
 				log.Println(*modeFlag, *keyFlag, *msgFlag)
 				ret.Encrypt()
