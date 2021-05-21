@@ -79,7 +79,7 @@ func (m *Message) GenerateKey() {
 	keyLength := len(m.Message)
 	var seed *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	const charset string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	const charset string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, keyLength)
 	for i := range b {
 		b[i] = charset[seed.Intn(len(charset))]
